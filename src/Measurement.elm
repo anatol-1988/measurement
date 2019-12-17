@@ -2,6 +2,7 @@ module Measurement exposing (HitType(..), Msg, hit, pageview, post)
 
 import Http
 import Url.Builder as Url
+import Parameter
 
 
 type Msg
