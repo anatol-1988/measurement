@@ -1,4 +1,4 @@
-module Measurement exposing (HitType(..), Msg, hit, pageview, request)
+module Measurement exposing (HitType(..), Msg, hit, pageview, post)
 
 import Http
 import Url.Builder as Url
@@ -47,23 +47,24 @@ toString hitType =
             "timing"
 
 
-request : HitType -> String -> String -> String -> ( String, Http.Body )
-request type_ trackingId clientId documentPath =
+hit : HitType -> String -> String -> List ( String, String ) -> ( String, Http.Body )
+hit type_ trackingId clientId values =
     let
         url =
             Url.absolute [ "collect" ]
-                [ Url.string "v" "1"
-                , Url.string "t" <| toString type_
-                , Url.string "tid" trackingId
-                , Url.string "cid" clientId
-                , Url.string "dp" documentPath
-                ]
+                ([ Url.string "v" "1"
+                 , Url.string "tid" trackingId
+                 , Url.string "cid" clientId
+                 , Url.string "t" <| toString type_
+                 ]
+                    ++ List.map (\( key, value ) -> Url.string key value) values
+                )
     in
     ( "https://www.google-analytics.com" ++ url, Http.emptyBody )
 
 
-hit : ( String, Http.Body ) -> Cmd Msg
-hit ( url, body ) =
+post : ( String, Http.Body ) -> Cmd Msg
+post ( url, body ) =
     Http.post
         { url = url
         , body = body
@@ -73,4 +74,4 @@ hit ( url, body ) =
 
 pageview : String -> String -> String -> Cmd Msg
 pageview trackingId clientId documentPath =
-    request Pageview trackingId clientId documentPath |> hit
+    hit Pageview trackingId clientId [ ( "dp", documentPath ) ] |> post
