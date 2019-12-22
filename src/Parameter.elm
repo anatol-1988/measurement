@@ -1,5 +1,8 @@
-module Parameter exposing (Parameter(..), toString)
+module Parameter exposing (..)
 
+{-| Parameters codes according to
+https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
+-}
 
 type Parameter
     = ProtocolVersion
@@ -37,7 +40,6 @@ type Parameter
     | DocumentPath
     | DocumentTitle
     | ScreenName
-    | ContentGroup1
     | LinkID
     | ApplicationName
     | ApplicationID
@@ -57,17 +59,6 @@ type Parameter
     | ItemQuantity
     | ItemCode
     | ItemCategory
-    | ProductSKU1
-    | ProductName1
-    | ProductBrand1
-    | ProductCategory1
-    | ProductVariant1
-    | ProductPrice1
-    | ProductQuantity1
-    | ProductCouponCode1
-    | ProductPosition1
-    | ProductCustomDimension1
-    | ProductCustomMetric1
     | ProductAction
     | Affiliation
     | Revenue
@@ -77,20 +68,6 @@ type Parameter
     | ProductActionList
     | CheckoutStep
     | CheckoutStepOption
-    | ProductImpressionListName1
-    | ProductImpressionSKU1
-    | ProductImpressionName1
-    | ProductImpressionBrand1
-    | ProductImpressionCategory1
-    | ProductImpressionVariant1
-    | ProductImpressionPosition1
-    | ProductImpressionPrice1
-    | ProductImpressionCustomDimension1
-    | ProductImpressionCustomMetric1
-    | PromotionID1
-    | PromotionName1
-    | PromotionCreative1
-    | PromotionPosition1
     | PromotionAction
     | CurrencyCode
     | SocialNetwork
@@ -222,9 +199,6 @@ toString param =
         ScreenName ->
             "cd"
 
-        ContentGroup1 ->
-            "cg1"
-
         LinkID ->
             "linkid"
 
@@ -282,39 +256,6 @@ toString param =
         ItemCategory ->
             "iv"
 
-        ProductSKU1 ->
-            "pr1id"
-
-        ProductName1 ->
-            "pr1nm"
-
-        ProductBrand1 ->
-            "pr1br"
-
-        ProductCategory1 ->
-            "pr1ca"
-
-        ProductVariant1 ->
-            "pr1va"
-
-        ProductPrice1 ->
-            "pr1pr"
-
-        ProductQuantity1 ->
-            "pr1qt"
-
-        ProductCouponCode1 ->
-            "pr1cc"
-
-        ProductPosition1 ->
-            "pr1ps"
-
-        ProductCustomDimension1 ->
-            "pr1cd1"
-
-        ProductCustomMetric1 ->
-            "pr1cm1"
-
         ProductAction ->
             "pa"
 
@@ -341,48 +282,6 @@ toString param =
 
         CheckoutStepOption ->
             "col"
-
-        ProductImpressionListName1 ->
-            "il1nm"
-
-        ProductImpressionSKU1 ->
-            "il1pi1id"
-
-        ProductImpressionName1 ->
-            "il1pi1nm"
-
-        ProductImpressionBrand1 ->
-            "il1pi1br"
-
-        ProductImpressionCategory1 ->
-            "il1pi1ca"
-
-        ProductImpressionVariant1 ->
-            "il1pi2va"
-
-        ProductImpressionPosition1 ->
-            "il1pi2ps"
-
-        ProductImpressionPrice1 ->
-            "il1pi2pr"
-
-        ProductImpressionCustomDimension1 ->
-            "il1pi2cd3"
-
-        ProductImpressionCustomMetric1 ->
-            "il1pi2cm3"
-
-        PromotionID1 ->
-            "promo1id"
-
-        PromotionName1 ->
-            "promo1nm"
-
-        PromotionCreative1 ->
-            "promo1cr"
-
-        PromotionPosition1 ->
-            "promo1ps"
 
         PromotionAction ->
             "promoa"
@@ -446,3 +345,174 @@ toString param =
 
         CustomMetric1 ->
             "cm1"
+
+
+contentGroup : Int -> String
+contentGroup groupIndex =
+    "cg" ++ String.fromInt groupIndex
+
+
+productSKU : Int -> String
+productSKU productIndex =
+    "pr" ++ String.fromInt productIndex ++ "id"
+
+
+productName : Int -> String
+productName productIndex =
+    "pr" ++ String.fromInt productIndex ++ "nm"
+
+
+productBrand : Int -> String
+productBrand productIndex =
+    "pr" ++ String.fromInt productIndex ++ "br"
+
+
+productCategory : Int -> String
+productCategory productIndex =
+    "pr" ++ String.fromInt productIndex ++ "ca"
+
+
+productVariant : Int -> String
+productVariant productIndex =
+    "pr" ++ String.fromInt productIndex ++ "va"
+
+
+productPrice : Int -> String
+productPrice productIndex =
+    "pr" ++ String.fromInt productIndex ++ "pr"
+
+
+productQuantity : Int -> String
+productQuantity productIndex =
+    "pr" ++ String.fromInt productIndex ++ "qt"
+
+
+productCouponCode : Int -> String
+productCouponCode productIndex =
+    "pr" ++ String.fromInt productIndex ++ "cc"
+
+
+productPosition : Int -> String
+productPosition productIndex =
+    "pr" ++ String.fromInt productIndex ++ "ps"
+
+
+productCustomDimension : Int -> Int -> String
+productCustomDimension productIndex dimensionIndex =
+    "pr"
+        ++ String.fromInt productIndex
+        ++ "cd"
+        ++ String.fromInt dimensionIndex
+
+
+productCustomMetric : Int -> Int -> String
+productCustomMetric productIndex metricIndex =
+    "pr" ++ String.fromInt productIndex ++ "cm" ++ String.fromInt metricIndex
+
+
+productImpressionListName : Int -> String
+productImpressionListName listIndex =
+    "il" ++ String.fromInt listIndex ++ "nm"
+
+
+productImpressionSKU : Int -> Int -> String
+productImpressionSKU listIndex productIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "id"
+
+
+productImpressionName : Int -> Int -> String
+productImpressionName listIndex productIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "nm"
+
+
+productImpressionBrand : Int -> Int -> String
+productImpressionBrand listIndex productIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "br"
+
+
+productImpressionCategory : Int -> Int -> String
+productImpressionCategory listIndex productIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "ca"
+
+
+productImpressionVariant : Int -> Int -> String
+productImpressionVariant listIndex productIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "va"
+
+
+productImpressionPosition : Int -> Int -> String
+productImpressionPosition listIndex productIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "ps"
+
+
+productImpressionPrice : Int -> Int -> String
+productImpressionPrice listIndex productIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "pr"
+
+
+productImpressionCustomDimension : Int -> Int -> Int -> String
+productImpressionCustomDimension listIndex productIndex dimensionIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "cd"
+        ++ String.fromInt dimensionIndex
+
+
+productImpressionCustomMetric : Int -> Int -> Int -> String
+productImpressionCustomMetric listIndex productIndex metricIndex =
+    "il"
+        ++ String.fromInt listIndex
+        ++ "pi"
+        ++ String.fromInt productIndex
+        ++ "cm"
+        ++ String.fromInt metricIndex
+
+
+promotionID : Int -> String
+promotionID promoIndex =
+    "promo" ++ String.fromInt promoIndex ++ "id"
+
+
+promotionName : Int -> String
+promotionName promoIndex =
+    "promo" ++ String.fromInt promoIndex ++ "nm"
+
+
+promotionCreative : Int -> String
+promotionCreative promoIndex =
+    "promo" ++ String.fromInt promoIndex ++ "cr"
+
+
+promotionPosition : Int -> String
+promotionPosition promoIndex =
+    "promo" ++ String.fromInt promoIndex ++ "ps"

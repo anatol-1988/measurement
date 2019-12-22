@@ -32,8 +32,11 @@ update msg model =
             ( model, Cmd.map Ga <| GA.pageview "UA-151596008-1" "555" "/home" )
 
         Ga m ->
-            let _ = (Debug.log "message" m)
-            in ( model, Cmd.none )
+            let
+                _ =
+                    Debug.log "message" m
+            in
+            ( model, Cmd.none )
 
 
 view : Model -> Html Msg
