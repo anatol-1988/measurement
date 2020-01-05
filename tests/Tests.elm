@@ -1,8 +1,9 @@
 module Tests exposing (all)
 
 import Expect
-import Http
+import HitType
 import Measurement exposing (hit)
+import Parameter
 import Test exposing (..)
 
 
@@ -11,16 +12,18 @@ all =
     describe "Check Analytics requests"
         [ test "pageview" <|
             \_ ->
-                hit Measurement.Pageview "UA-XXXXX-Y" "555" [ ( "dp", "/home" ) ]
+                hit HitType.Pageview
+                    "UA-XXXXX-Y"
+                    "555"
+                    [ ( Parameter.DocumentPath, "/home" ) ]
                     |> Expect.equal
-                        ( "https://www.google-analytics.com/collect?v=1&tid=UA-XXXXX-Y&cid=555&t=pageview&dp=%2Fhome"
-                        , Http.emptyBody
-                        )
+                        "https://www.google-analytics.com/collect?v=1&tid=UA-XXXXX-Y&cid=555&t=pageview&dp=%2Fhome"
         , test "generic hit" <|
             \_ ->
-                hit Measurement.Pageview "UA-123456-1" "5555" [ ( "dp", "/pageA" ) ]
+                hit HitType.Pageview
+                    "UA-123456-1"
+                    "5555"
+                    [ ( Parameter.DocumentPath, "/pageA" ) ]
                     |> Expect.equal
-                        ( "https://www.google-analytics.com/collect?v=1&tid=UA-123456-1&cid=5555&t=pageview&dp=%2FpageA"
-                        , Http.emptyBody
-                        )
+                        "https://www.google-analytics.com/collect?v=1&tid=UA-123456-1&cid=5555&t=pageview&dp=%2FpageA"
         ]
