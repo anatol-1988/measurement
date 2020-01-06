@@ -1,4 +1,4 @@
-module Measurement exposing (Msg, hit, pageview, post)
+module Measurement exposing (Msg, get, getHit, pageview)
 
 import HitType exposing (HitType)
 import Http
@@ -10,23 +10,26 @@ type Msg
     = Measured (Result Http.Error ())
 
 
-hit :
-    HitType
-    -> String
-    -> String
-    -> List ( Parameter.Parameter, String )
-    -> String
-hit type_ trackingId clientId values =
+type alias Hit =
+    { hitType : HitType
+    , trackingId : String
+    , clientId : String
+    , payload : List ( Parameter.Parameter, String )
+    }
+
+
+getHit : Hit -> String
+getHit hit =
     let
         url =
             Url.absolute [ "collect" ]
                 ([ Url.string (Parameter.toString Parameter.ProtocolVersion)
                     "1"
                  , Url.string (Parameter.toString Parameter.TrackingID)
-                    trackingId
-                 , Url.string (Parameter.toString Parameter.ClientID) clientId
+                    hit.trackingId
+                 , Url.string (Parameter.toString Parameter.ClientID) hit.clientId
                  , Url.string (Parameter.toString Parameter.Hittype) <|
-                    HitType.toString type_
+                    HitType.toString hit.hitType
                  ]
                     ++ List.map
                         (\( key, value ) ->
@@ -34,25 +37,31 @@ hit type_ trackingId clientId values =
                                 (Parameter.toString key)
                                 value
                         )
-                        values
+                        hit.payload
                 )
     in
     "https://www.google-analytics.com" ++ url
 
 
-post : String -> Cmd Msg
-post url =
-    Http.post
-        { url = url
-        , body = Http.emptyBody
-        , expect = Http.expectWhatever Measured
+batch : List Hit -> ( String, Http.Body )
+batch hits =
+    ( "", Http.emptyBody )
+
+
+get : String -> Cmd Msg
+get url =
+    Http.get
+        { expect = Http.expectWhatever Measured
+        , url = url
         }
 
 
 pageview : String -> String -> String -> Cmd Msg
 pageview trackingId clientId documentPath =
-    hit HitType.Pageview
-        trackingId
-        clientId
-        [ ( Parameter.DocumentPath, documentPath ) ]
-        |> post
+    getHit
+        { hitType = HitType.Pageview
+        , trackingId = trackingId
+        , clientId = clientId
+        , payload = [ ( Parameter.DocumentPath, documentPath ) ]
+        }
+        |> get
