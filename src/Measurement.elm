@@ -1,4 +1,4 @@
-module Measurement exposing (Msg, getHit, pageview)
+module Measurement exposing (Msg, getHit, pageview, postHit)
 
 import HitType exposing (HitType)
 import Http
@@ -45,6 +45,32 @@ getHit hit =
     }
 
 
+postHit : Hit -> { url : String, body : Http.Body, expect : Http.Expect Msg }
+postHit hit =
+    let
+        payload =
+            [ Url.string (Parameter.toString Parameter.ProtocolVersion)
+                "1"
+            , Url.string (Parameter.toString Parameter.TrackingID)
+                hit.trackingId
+            , Url.string (Parameter.toString Parameter.ClientID) hit.clientId
+            , Url.string (Parameter.toString Parameter.Hittype) <|
+                HitType.toString hit.hitType
+            ]
+                ++ List.map
+                    (\( key, value ) ->
+                        Url.string
+                            (Parameter.toString key)
+                            value
+                    )
+                    hit.payload
+    in
+    { url = "https://www.google-analytics.com/collect"
+    , body = Http.stringBody "" <| String.dropLeft 1 <| Url.toQuery payload
+    , expect = Http.expectWhatever Measured
+    }
+
+
 batch : List Hit -> ( String, Http.Body )
 batch hits =
     ( "", Http.emptyBody )
@@ -52,10 +78,10 @@ batch hits =
 
 pageview : String -> String -> String -> Cmd Msg
 pageview trackingId clientId documentPath =
-    getHit
+    postHit
         { hitType = HitType.Pageview
         , trackingId = trackingId
         , clientId = clientId
         , payload = [ ( Parameter.DocumentPath, documentPath ) ]
         }
-        |> Http.get
+        |> Http.post
