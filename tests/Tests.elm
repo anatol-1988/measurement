@@ -18,6 +18,7 @@ all =
                     , clientId = "555"
                     , payload = [ ( Parameter.DocumentPath, "/home" ) ]
                     }
+                    |> .url
                     |> Expect.equal
                         "https://www.google-analytics.com/collect?v=1&tid=UA-XXXXX-Y&cid=555&t=pageview&dp=%2Fhome"
         , test "generic hit" <|
@@ -28,6 +29,7 @@ all =
                     , clientId = "5555"
                     , payload = [ ( Parameter.DocumentPath, "/pageA" ) ]
                     }
+                    |> .url
                     |> Expect.equal
                         "https://www.google-analytics.com/collect?v=1&tid=UA-123456-1&cid=5555&t=pageview&dp=%2FpageA"
         ]

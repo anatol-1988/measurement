@@ -1,4 +1,4 @@
-module Measurement exposing (Msg, get, getHit, pageview)
+module Measurement exposing (Msg, getHit, pageview)
 
 import HitType exposing (HitType)
 import Http
@@ -18,7 +18,7 @@ type alias Hit =
     }
 
 
-getHit : Hit -> String
+getHit : Hit -> { expect : Http.Expect Msg, url : String }
 getHit hit =
     let
         url =
@@ -40,20 +40,14 @@ getHit hit =
                         hit.payload
                 )
     in
-    "https://www.google-analytics.com" ++ url
+    { expect = Http.expectWhatever Measured
+    , url = "https://www.google-analytics.com" ++ url
+    }
 
 
 batch : List Hit -> ( String, Http.Body )
 batch hits =
     ( "", Http.emptyBody )
-
-
-get : String -> Cmd Msg
-get url =
-    Http.get
-        { expect = Http.expectWhatever Measured
-        , url = url
-        }
 
 
 pageview : String -> String -> String -> Cmd Msg
@@ -64,4 +58,4 @@ pageview trackingId clientId documentPath =
         , clientId = clientId
         , payload = [ ( Parameter.DocumentPath, documentPath ) ]
         }
-        |> get
+        |> Http.get
