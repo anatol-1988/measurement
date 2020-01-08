@@ -22,31 +22,23 @@ getHit : Hit -> { expect : Http.Expect Msg, url : String }
 getHit hit =
     let
         url =
-            Url.absolute [ "collect" ]
-                ([ Url.string (Parameter.toString Parameter.ProtocolVersion)
-                    "1"
-                 , Url.string (Parameter.toString Parameter.TrackingID)
-                    hit.trackingId
-                 , Url.string (Parameter.toString Parameter.ClientID) hit.clientId
-                 , Url.string (Parameter.toString Parameter.Hittype) <|
-                    HitType.toString hit.hitType
-                 ]
-                    ++ List.map
-                        (\( key, value ) ->
-                            Url.string
-                                (Parameter.toString key)
-                                value
-                        )
-                        hit.payload
-                )
+            payloadToQuery hit
     in
     { expect = Http.expectWhatever Measured
-    , url = "https://www.google-analytics.com" ++ url
+    , url = "https://www.google-analytics.com/collect?" ++ url
     }
 
 
 postHit : Hit -> { url : String, body : Http.Body, expect : Http.Expect Msg }
 postHit hit =
+    { url = "https://www.google-analytics.com/collect"
+    , body = Http.stringBody "" <| payloadToQuery hit
+    , expect = Http.expectWhatever Measured
+    }
+
+
+payloadToQuery : Hit -> String
+payloadToQuery hit =
     let
         payload =
             [ Url.string (Parameter.toString Parameter.ProtocolVersion)
@@ -65,23 +57,36 @@ postHit hit =
                     )
                     hit.payload
     in
-    { url = "https://www.google-analytics.com/collect"
-    , body = Http.stringBody "" <| String.dropLeft 1 <| Url.toQuery payload
+    String.dropLeft 1 <| Url.toQuery payload
+
+
+batch :
+    List Hit
+    ->
+        { url : String
+        , body : Http.Body
+        , expect : Http.Expect Msg
+        }
+batch hits =
+    let
+        payloads =
+            List.map payloadToQuery hits
+
+        body =
+            String.join "\n" payloads
+    in
+    { url = "https://www.google-analytics.com/batch"
+    , body = Http.stringBody "" body
     , expect = Http.expectWhatever Measured
     }
-
-
-batch : List Hit -> ( String, Http.Body )
-batch hits =
-    ( "", Http.emptyBody )
 
 
 pageview : String -> String -> String -> Cmd Msg
 pageview trackingId clientId documentPath =
     postHit
         { hitType = HitType.Pageview
-        , trackingId = trackingId
-        , clientId = clientId
-        , payload = [ ( Parameter.DocumentPath, documentPath ) ]
-        }
+          , trackingId = trackingId
+          , clientId = clientId
+          , payload = [ ( Parameter.DocumentPath, documentPath ) ]
+          }
         |> Http.post
