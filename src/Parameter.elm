@@ -1,5 +1,6 @@
 module Parameter exposing (Parameter(..), toQuery)
 
+import Currency exposing (Currency)
 import HitType
 import Url.Builder exposing (QueryParameter, int, string)
 
@@ -8,10 +9,6 @@ import Url.Builder exposing (QueryParameter, int, string)
 <https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters>
 -}
 type alias Text =
-    String
-
-
-type alias Currency =
     String
 
 
@@ -283,19 +280,19 @@ toQuery param =
             string "ta" affilation
 
         TransactionRevenue revenue ->
-            string "tr" revenue
+            string "tr" <| Currency.toString revenue
 
         TransactionShipping shipping ->
-            string "ts" shipping
+            string "ts" <| Currency.toString shipping
 
         TransactionTax tax ->
-            string "tt" tax
+            string "tt" <| Currency.toString tax
 
         ItemName name ->
             string "in" name
 
         ItemPrice price ->
-            string "ip" price
+            string "ip" <| Currency.toString price
 
         ItemQuantity quantity ->
             int "iq" quantity
@@ -322,7 +319,8 @@ toQuery param =
             string ("pr" ++ String.fromInt productIndex ++ "va") variant
 
         ProductPrice productIndex price ->
-            string ("pr" ++ String.fromInt productIndex ++ "pr") price
+            string ("pr" ++ String.fromInt productIndex ++ "pr")
+                (Currency.toString price)
 
         ProductQuantity productIndex quantity ->
             int ("pr" ++ String.fromInt productIndex ++ "qt") quantity
@@ -418,7 +416,7 @@ toQuery param =
                     ++ String.fromInt productIndex
                     ++ "pr"
                 )
-                price
+                (Currency.toString price)
 
         ProductImpressionCustomDimension listIndex productIndex dimensionIndex dimension ->
             string
@@ -449,13 +447,13 @@ toQuery param =
             string "ta" affilation
 
         Revenue revenue ->
-            string "tr" revenue
+            string "tr" <| Currency.toString revenue
 
         Tax tax ->
-            string "tt" tax
+            string "tt" <| Currency.toString tax
 
         Shipping shipping ->
-            string "ts" shipping
+            string "ts" <| Currency.toString shipping
 
         CouponCode code ->
             string "tcc" code
