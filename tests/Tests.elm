@@ -17,7 +17,7 @@ all =
                     { hitType = HitType.Pageview
                     , trackingId = "UA-XXXXX-Y"
                     , clientId = "555"
-                    , payload = [ ( Parameter.DocumentPath, "/home" ) ]
+                    , payload = [ Parameter.DocumentPath "/home" ]
                     }
                     |> .url
                     |> Expect.equal
@@ -28,7 +28,7 @@ all =
                     { hitType = HitType.Pageview
                     , trackingId = "UA-123456-1"
                     , clientId = "5555"
-                    , payload = [ ( Parameter.DocumentPath, "/pageA" ) ]
+                    , payload = [ Parameter.DocumentPath "/pageA" ]
                     }
                     |> .url
                     |> Expect.equal
@@ -39,7 +39,7 @@ all =
                     { hitType = HitType.Pageview
                     , trackingId = "UA-123456-1"
                     , clientId = "5555"
-                    , payload = [ ( Parameter.DocumentPath, "/pageA" ) ]
+                    , payload = [ Parameter.DocumentPath "/pageA" ]
                     }
                     |> .url
                     |> Expect.equal "https://www.google-analytics.com/collect"

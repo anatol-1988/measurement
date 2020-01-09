@@ -1,4 +1,4 @@
-module Measurement exposing (Msg, getHit, pageview, event, postHit)
+module Measurement exposing (Msg, event, getHit, pageview, postHit)
 
 import HitType exposing (HitType)
 import Http
@@ -14,7 +14,7 @@ type alias Hit =
     { hitType : HitType
     , trackingId : String
     , clientId : String
-    , payload : List ( Parameter.Parameter, String )
+    , payload : List Parameter.Parameter
     }
 
 
@@ -41,20 +41,13 @@ payloadToQuery : Hit -> String
 payloadToQuery hit =
     let
         payload =
-            [ Url.string (Parameter.toString Parameter.ProtocolVersion)
-                "1"
-            , Url.string (Parameter.toString Parameter.TrackingID)
-                hit.trackingId
-            , Url.string (Parameter.toString Parameter.ClientID) hit.clientId
-            , Url.string (Parameter.toString Parameter.Hittype) <|
-                HitType.toString hit.hitType
+            [ Parameter.toQuery <| Parameter.ProtocolVersion "1"
+            , Parameter.toQuery <| Parameter.TrackingID hit.trackingId
+            , Parameter.toQuery <| Parameter.ClientID hit.clientId
+            , Parameter.toQuery <| Parameter.Hittype hit.hitType
             ]
                 ++ List.map
-                    (\( key, value ) ->
-                        Url.string
-                            (Parameter.toString key)
-                            value
-                    )
+                    (\param -> Parameter.toQuery param)
                     hit.payload
     in
     String.dropLeft 1 <| Url.toQuery payload
@@ -87,22 +80,22 @@ pageview trackingId clientId documentPath =
         { hitType = HitType.Pageview
         , trackingId = trackingId
         , clientId = clientId
-        , payload = [ ( Parameter.DocumentPath, documentPath ) ]
+        , payload = [ Parameter.DocumentPath documentPath ]
         }
         |> Http.post
 
 
-event : String -> String -> String -> String -> String -> String -> Cmd Msg
+event : String -> String -> String -> String -> String -> Int -> Cmd Msg
 event trackingId clientId category action label value =
     postHit
         { hitType = HitType.Event
         , trackingId = trackingId
         , clientId = clientId
         , payload =
-            [ ( Parameter.EventCategory, category )
-            , ( Parameter.EventAction, action )
-            , ( Parameter.EventLabel, label )
-            , ( Parameter.EventValue, value )
+            [ Parameter.EventCategory category
+            , Parameter.EventAction action
+            , Parameter.EventLabel label
+            , Parameter.EventValue value
             ]
         }
         |> Http.post

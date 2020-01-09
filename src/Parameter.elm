@@ -1,493 +1,545 @@
-module Parameter exposing (Parameter(..), toString)
+module Parameter exposing (Parameter(..), toQuery)
+
+import HitType
+import Url.Builder exposing (QueryParameter, int, string)
+
 
 {-| Parameters codes according to
 <https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters>
 -}
+type alias Text =
+    String
+
+
+type alias Currency =
+    String
 
 
 type Parameter
-    = ProtocolVersion
-    | TrackingID
-    | AnonymizeIP
-    | DataSource
-    | QueueTime
-    | CacheBuster
-    | ClientID
-    | UserID
-    | SessionControl
-    | IPOverride
-    | UserAgentOverride
-    | GeographicalOverride
-    | DocumentReferrer
-    | CampaignName
-    | CampaignSource
-    | CampaignMedium
-    | CampaignKeyword
-    | CampaignContent
-    | CampaignID
-    | GoogleAdsID
-    | GoogleDisplayAdsID
-    | ScreenResolution
-    | Viewportsize
-    | DocumentEncoding
-    | ScreenColors
-    | UserLanguage
-    | JavaEnabled
-    | FlashVersion
-    | Hittype
-    | NonInteractionHit
-    | DocumentlocationURL
-    | DocumentHostName
-    | DocumentPath
-    | DocumentTitle
-    | ScreenName
-    | ContentGroup Int
-    | LinkID
-    | ApplicationName
-    | ApplicationID
-    | ApplicationVersion
-    | ApplicationInstallerID
-    | EventCategory
-    | EventAction
-    | EventLabel
-    | EventValue
-    | TransactionID
-    | TransactionAffiliation
-    | TransactionRevenue
-    | TransactionShipping
-    | TransactionTax
-    | ItemName
-    | ItemPrice
-    | ItemQuantity
-    | ItemCode
-    | ItemCategory
-    | ProductSKU Int
-    | ProductName Int
-    | ProductBrand Int
-    | ProductCategory Int
-    | ProductVariant Int
-    | ProductPrice Int
-    | ProductQuantity Int
-    | ProductCouponCode Int
-    | ProductPosition Int
-    | ProductCustomDimension Int Int
-    | ProductCustomMetric Int Int
-    | ProductImpressionListName Int
-    | ProductImpressionSKU Int Int
-    | ProductImpressionName Int Int
-    | ProductImpressionBrand Int Int
-    | ProductImpressionCategory Int Int
-    | ProductImpressionVariant Int Int
-    | ProductImpressionPosition Int Int
-    | ProductImpressionPrice Int Int
-    | ProductImpressionCustomDimension Int Int Int
-    | ProductImpressionCustomMetric Int Int Int
-    | ProductAction
-    | Affiliation
-    | Revenue
-    | Tax
-    | Shipping
-    | CouponCode
-    | ProductActionList
-    | CheckoutStep
-    | CheckoutStepOption
-    | PromotionID Int
-    | PromotionName Int
-    | PromotionCreative Int
-    | PromotionPosition Int
-    | PromotionAction
-    | CurrencyCode
-    | SocialNetwork
-    | SocialAction
-    | SocialActionTarget
-    | Usertimingcategory
-    | Usertimingvariablename
-    | Usertimingtime
-    | Usertiminglabel
-    | PageLoadTime
-    | DNSTime
-    | PageDownloadTime
-    | RedirectResponseTime
-    | TCPConnectTime
-    | ServerResponseTime
-    | DOMInteractiveTime
-    | ContentLoadTime
-    | ExceptionDescription
-    | IsExceptionFatal
-    | CustomDimension1
-    | CustomMetric1
+    = ProtocolVersion Text
+    | TrackingID Text
+    | AnonymizeIP Bool
+    | DataSource Text
+    | QueueTime Int
+    | CacheBuster Text
+    | ClientID Text
+    | UserID Text
+    | SessionControl Text
+    | IPOverride Text
+    | UserAgentOverride Text
+    | GeographicalOverride Text
+    | DocumentReferrer Text
+    | CampaignName Text
+    | CampaignSource Text
+    | CampaignMedium Text
+    | CampaignKeyword Text
+    | CampaignContent Text
+    | CampaignID Text
+    | GoogleAdsID Text
+    | GoogleDisplayAdsID Text
+    | ScreenResolution Text
+    | Viewportsize Text
+    | DocumentEncoding Text
+    | ScreenColors Text
+    | UserLanguage Text
+    | JavaEnabled Bool
+    | FlashVersion Text
+    | Hittype HitType.HitType
+    | NonInteractionHit Bool
+    | DocumentlocationURL Text
+    | DocumentHostName Text
+    | DocumentPath Text
+    | DocumentTitle Text
+    | ScreenName Text
+    | ContentGroup Int Text
+    | LinkID Text
+    | ApplicationName Text
+    | ApplicationID Text
+    | ApplicationVersion Text
+    | ApplicationInstallerID Text
+    | EventCategory Text
+    | EventAction Text
+    | EventLabel Text
+    | EventValue Int
+    | TransactionID Text
+    | TransactionAffiliation Text
+    | TransactionRevenue Currency
+    | TransactionShipping Currency
+    | TransactionTax Currency
+    | ItemName Text
+    | ItemPrice Currency
+    | ItemQuantity Int
+    | ItemCode Text
+    | ItemCategory Text
+    | ProductSKU Int Text
+    | ProductName Int Text
+    | ProductBrand Int Text
+    | ProductCategory Int Text
+    | ProductVariant Int Text
+    | ProductPrice Int Currency
+    | ProductQuantity Int Int
+    | ProductCouponCode Int Text
+    | ProductPosition Int Int
+    | ProductCustomDimension Int Int Text
+    | ProductCustomMetric Int Int Int
+    | ProductImpressionListName Int Text
+    | ProductImpressionSKU Int Int Text
+    | ProductImpressionName Int Int Text
+    | ProductImpressionBrand Int Int Text
+    | ProductImpressionCategory Int Int Text
+    | ProductImpressionVariant Int Int Text
+    | ProductImpressionPosition Int Int Int
+    | ProductImpressionPrice Int Int Currency
+    | ProductImpressionCustomDimension Int Int Int Text
+    | ProductImpressionCustomMetric Int Int Int Int
+    | ProductAction Text
+    | Affiliation Text
+    | Revenue Currency
+    | Tax Currency
+    | Shipping Currency
+    | CouponCode Text
+    | ProductActionList Text
+    | CheckoutStep Int
+    | CheckoutStepOption Text
+    | PromotionID Int Text
+    | PromotionName Int Text
+    | PromotionCreative Int Text
+    | PromotionPosition Int Text
+    | PromotionAction Text
+    | CurrencyCode Text
+    | SocialNetwork Text
+    | SocialAction Text
+    | SocialActionTarget Text
+    | Usertimingcategory Text
+    | Usertimingvariablename Text
+    | Usertimingtime Int
+    | Usertiminglabel Text
+    | PageLoadTime Int
+    | DNSTime Int
+    | PageDownloadTime Int
+    | RedirectResponseTime Int
+    | TCPConnectTime Int
+    | ServerResponseTime Int
+    | DOMInteractiveTime Int
+    | ContentLoadTime Int
+    | ExceptionDescription Text
+    | IsExceptionFatal Bool
+    | CustomDimension Int Text
+    | CustomMetric Int Text
 
 
-toString : Parameter -> String
-toString param =
+boolToInt : Bool -> Int
+boolToInt bool =
+    case bool of
+        True ->
+            1
+
+        False ->
+            0
+
+
+toQuery : Parameter -> QueryParameter
+toQuery param =
     case param of
-        ProtocolVersion ->
-            "v"
+        ProtocolVersion version ->
+            string "v" version
 
-        TrackingID ->
-            "tid"
+        TrackingID id ->
+            string "tid" id
 
-        AnonymizeIP ->
-            "aip"
+        AnonymizeIP anonymize ->
+            int "aip" <| boolToInt anonymize
 
-        DataSource ->
-            "ds"
+        DataSource source ->
+            string "ds" source
 
-        QueueTime ->
-            "qt"
+        QueueTime time ->
+            int "qt" time
 
-        CacheBuster ->
-            "z"
+        CacheBuster cache ->
+            string "z" cache
 
-        ClientID ->
-            "cid"
+        ClientID id ->
+            string "cid" id
 
-        UserID ->
-            "uid"
+        UserID id ->
+            string "uid" id
 
-        SessionControl ->
-            "sc"
+        SessionControl control ->
+            string "sc" control
 
-        IPOverride ->
-            "uip"
+        IPOverride ip ->
+            string "uip" ip
 
-        UserAgentOverride ->
-            "ua"
+        UserAgentOverride agent ->
+            string "ua" agent
 
-        GeographicalOverride ->
-            "geoid"
+        GeographicalOverride geo ->
+            string "geoid" geo
 
-        DocumentReferrer ->
-            "dr"
+        DocumentReferrer referrer ->
+            string "dr" referrer
 
-        CampaignName ->
-            "cn"
+        CampaignName name ->
+            string "cn" name
 
-        CampaignSource ->
-            "cs"
+        CampaignSource source ->
+            string "cs" source
 
-        CampaignMedium ->
-            "cm"
+        CampaignMedium medium ->
+            string "cm" medium
 
-        CampaignKeyword ->
-            "ck"
+        CampaignKeyword keyword ->
+            string "ck" keyword
 
-        CampaignContent ->
-            "cc"
+        CampaignContent content ->
+            string "cc" content
 
-        CampaignID ->
-            "ci"
+        CampaignID id ->
+            string "ci" id
 
-        GoogleAdsID ->
-            "gclid"
+        GoogleAdsID id ->
+            string "gclid" id
 
-        GoogleDisplayAdsID ->
-            "dclid"
+        GoogleDisplayAdsID id ->
+            string "dclid" id
 
-        ScreenResolution ->
-            "sr"
+        ScreenResolution resolution ->
+            string "sr" resolution
 
-        Viewportsize ->
-            "vp"
+        Viewportsize size ->
+            string "vp" size
 
-        DocumentEncoding ->
-            "de"
+        DocumentEncoding encoding ->
+            string "de" encoding
 
-        ScreenColors ->
-            "sd"
+        ScreenColors colors ->
+            string "sd" colors
 
-        UserLanguage ->
-            "ul"
+        UserLanguage lang ->
+            string "ul" lang
 
-        JavaEnabled ->
-            "je"
+        JavaEnabled enabled ->
+            int "je" <| boolToInt enabled
 
-        FlashVersion ->
-            "fl"
+        FlashVersion version ->
+            string "fl" version
 
-        Hittype ->
-            "t"
+        Hittype type_ ->
+            string "t" <| HitType.toString type_
 
-        NonInteractionHit ->
-            "ni"
+        NonInteractionHit hit ->
+            int "ni" <| boolToInt hit
 
-        DocumentlocationURL ->
-            "dl"
+        DocumentlocationURL url ->
+            string "dl" url
 
-        DocumentHostName ->
-            "dh"
+        DocumentHostName name ->
+            string "dh" name
 
-        DocumentPath ->
-            "dp"
+        DocumentPath path ->
+            string "dp" path
 
-        DocumentTitle ->
-            "dt"
+        DocumentTitle title ->
+            string "dt" title
 
-        ScreenName ->
-            "cd"
+        ScreenName name ->
+            string "cd" name
 
-        ContentGroup groupIndex ->
-            "cg" ++ String.fromInt groupIndex
+        ContentGroup groupIndex group ->
+            string ("cg" ++ String.fromInt groupIndex) group
 
-        LinkID ->
-            "linkid"
+        LinkID id ->
+            string "linkid" id
 
-        ApplicationName ->
-            "an"
+        ApplicationName name ->
+            string "an" name
 
-        ApplicationID ->
-            "aid"
+        ApplicationID id ->
+            string "aid" id
 
-        ApplicationVersion ->
-            "av"
+        ApplicationVersion version ->
+            string "av" version
 
-        ApplicationInstallerID ->
-            "aiid"
+        ApplicationInstallerID id ->
+            string "aiid" id
 
-        EventCategory ->
-            "ec"
+        EventCategory category ->
+            string "ec" category
 
-        EventAction ->
-            "ea"
+        EventAction action ->
+            string "ea" action
 
-        EventLabel ->
-            "el"
+        EventLabel label ->
+            string "el" label
 
-        EventValue ->
-            "ev"
+        EventValue value ->
+            int "ev" value
 
-        TransactionID ->
-            "ti"
+        TransactionID id ->
+            string "ti" id
 
-        TransactionAffiliation ->
-            "ta"
+        TransactionAffiliation affilation ->
+            string "ta" affilation
 
-        TransactionRevenue ->
-            "tr"
+        TransactionRevenue revenue ->
+            string "tr" revenue
 
-        TransactionShipping ->
-            "ts"
+        TransactionShipping shipping ->
+            string "ts" shipping
 
-        TransactionTax ->
-            "tt"
+        TransactionTax tax ->
+            string "tt" tax
 
-        ItemName ->
-            "in"
+        ItemName name ->
+            string "in" name
 
-        ItemPrice ->
-            "ip"
+        ItemPrice price ->
+            string "ip" price
+
+        ItemQuantity quantity ->
+            int "iq" quantity
+
+        ItemCode code ->
+            string "ic" code
+
+        ItemCategory category ->
+            string "iv" category
+
+        ProductSKU productIndex sku ->
+            string ("pr" ++ String.fromInt productIndex ++ "id") sku
+
+        ProductName productIndex name ->
+            string ("pr" ++ String.fromInt productIndex ++ "nm") name
+
+        ProductBrand productIndex brand ->
+            string ("pr" ++ String.fromInt productIndex ++ "br") brand
+
+        ProductCategory productIndex category ->
+            string ("pr" ++ String.fromInt productIndex ++ "ca") category
+
+        ProductVariant productIndex variant ->
+            string ("pr" ++ String.fromInt productIndex ++ "va") variant
+
+        ProductPrice productIndex price ->
+            string ("pr" ++ String.fromInt productIndex ++ "pr") price
+
+        ProductQuantity productIndex quantity ->
+            int ("pr" ++ String.fromInt productIndex ++ "qt") quantity
+
+        ProductCouponCode productIndex code ->
+            string ("pr" ++ String.fromInt productIndex ++ "cc") code
+
+        ProductPosition productIndex position ->
+            int ("pr" ++ String.fromInt productIndex ++ "ps") position
+
+        ProductCustomDimension productIndex dimensionIndex dimension ->
+            string
+                ("pr"
+                    ++ String.fromInt productIndex
+                    ++ "cd"
+                    ++ String.fromInt dimensionIndex
+                )
+                dimension
+
+        ProductCustomMetric productIndex metricIndex metric ->
+            int
+                ("pr" ++ String.fromInt productIndex ++ "cm" ++ String.fromInt metricIndex)
+                metric
+
+        ProductImpressionListName listIndex name ->
+            string ("il" ++ String.fromInt listIndex ++ "nm") name
+
+        ProductImpressionSKU listIndex productIndex sku ->
+            string
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "id"
+                )
+                sku
+
+        ProductImpressionName listIndex productIndex name ->
+            string
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "nm"
+                )
+                name
+
+        ProductImpressionBrand listIndex productIndex brand ->
+            string
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "br"
+                )
+                brand
+
+        ProductImpressionCategory listIndex productIndex category ->
+            string
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "ca"
+                )
+                category
+
+        ProductImpressionVariant listIndex productIndex variant ->
+            string
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "va"
+                )
+                variant
+
+        ProductImpressionPosition listIndex productIndex position ->
+            int
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "ps"
+                )
+                position
+
+        ProductImpressionPrice listIndex productIndex price ->
+            string
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "pr"
+                )
+                price
+
+        ProductImpressionCustomDimension listIndex productIndex dimensionIndex dimension ->
+            string
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "cd"
+                    ++ String.fromInt dimensionIndex
+                )
+                dimension
+
+        ProductImpressionCustomMetric listIndex productIndex metricIndex metric ->
+            int
+                ("il"
+                    ++ String.fromInt listIndex
+                    ++ "pi"
+                    ++ String.fromInt productIndex
+                    ++ "cm"
+                    ++ String.fromInt metricIndex
+                )
+                metric
 
-        ItemQuantity ->
-            "iq"
+        ProductAction action ->
+            string "pa" action
 
-        ItemCode ->
-            "ic"
+        Affiliation affilation ->
+            string "ta" affilation
 
-        ItemCategory ->
-            "iv"
+        Revenue revenue ->
+            string "tr" revenue
 
-        ProductSKU productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "id"
+        Tax tax ->
+            string "tt" tax
 
-        ProductName productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "nm"
+        Shipping shipping ->
+            string "ts" shipping
 
-        ProductBrand productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "br"
+        CouponCode code ->
+            string "tcc" code
 
-        ProductCategory productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "ca"
+        ProductActionList list ->
+            string "pal" list
 
-        ProductVariant productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "va"
+        CheckoutStep step ->
+            int "cos" step
 
-        ProductPrice productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "pr"
+        CheckoutStepOption option ->
+            string "col" option
 
-        ProductQuantity productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "qt"
+        PromotionID promoIndex id ->
+            string ("promo" ++ String.fromInt promoIndex ++ "id") id
 
-        ProductCouponCode productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "cc"
+        PromotionName promoIndex name ->
+            string ("promo" ++ String.fromInt promoIndex ++ "nm") name
 
-        ProductPosition productIndex ->
-            "pr" ++ String.fromInt productIndex ++ "ps"
+        PromotionCreative promoIndex creative ->
+            string ("promo" ++ String.fromInt promoIndex ++ "cr") creative
 
-        ProductCustomDimension productIndex dimensionIndex ->
-            "pr"
-                ++ String.fromInt productIndex
-                ++ "cd"
-                ++ String.fromInt dimensionIndex
+        PromotionPosition promoIndex position ->
+            string ("promo" ++ String.fromInt promoIndex ++ "ps") position
 
-        ProductCustomMetric productIndex metricIndex ->
-            "pr" ++ String.fromInt productIndex ++ "cm" ++ String.fromInt metricIndex
+        PromotionAction action ->
+            string "promoa" action
 
-        ProductImpressionListName listIndex ->
-            "il" ++ String.fromInt listIndex ++ "nm"
+        CurrencyCode code ->
+            string "cu" code
 
-        ProductImpressionSKU listIndex productIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "id"
+        SocialNetwork network ->
+            string "sn" network
 
-        ProductImpressionName listIndex productIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "nm"
+        SocialAction action ->
+            string "sa" action
 
-        ProductImpressionBrand listIndex productIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "br"
+        SocialActionTarget target ->
+            string "st" target
 
-        ProductImpressionCategory listIndex productIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "ca"
+        Usertimingcategory category ->
+            string "utc" category
 
-        ProductImpressionVariant listIndex productIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "va"
+        Usertimingvariablename name ->
+            string "utv" name
 
-        ProductImpressionPosition listIndex productIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "ps"
+        Usertimingtime time ->
+            int "utt" time
 
-        ProductImpressionPrice listIndex productIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "pr"
+        Usertiminglabel label ->
+            string "utl" label
 
-        ProductImpressionCustomDimension listIndex productIndex dimensionIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "cd"
-                ++ String.fromInt dimensionIndex
+        PageLoadTime time ->
+            int "plt" time
 
-        ProductImpressionCustomMetric listIndex productIndex metricIndex ->
-            "il"
-                ++ String.fromInt listIndex
-                ++ "pi"
-                ++ String.fromInt productIndex
-                ++ "cm"
-                ++ String.fromInt metricIndex
+        DNSTime time ->
+            int "dns" time
 
-        ProductAction ->
-            "pa"
+        PageDownloadTime time ->
+            int "pdt" time
 
-        Affiliation ->
-            "ta"
+        RedirectResponseTime time ->
+            int "rrt" time
 
-        Revenue ->
-            "tr"
+        TCPConnectTime time ->
+            int "tcp" time
 
-        Tax ->
-            "tt"
+        ServerResponseTime time ->
+            int "srt" time
 
-        Shipping ->
-            "ts"
+        DOMInteractiveTime time ->
+            int "dit" time
 
-        CouponCode ->
-            "tcc"
+        ContentLoadTime time ->
+            int "clt" time
 
-        ProductActionList ->
-            "pal"
+        ExceptionDescription description ->
+            string "exd" description
 
-        CheckoutStep ->
-            "cos"
+        IsExceptionFatal fatal ->
+            int "exf" <| boolToInt fatal
 
-        CheckoutStepOption ->
-            "col"
+        CustomDimension dimension value ->
+            string ("cd" ++ String.fromInt dimension) value
 
-        PromotionID promoIndex ->
-            "promo" ++ String.fromInt promoIndex ++ "id"
-
-        PromotionName promoIndex ->
-            "promo" ++ String.fromInt promoIndex ++ "nm"
-
-        PromotionCreative promoIndex ->
-            "promo" ++ String.fromInt promoIndex ++ "cr"
-
-        PromotionPosition promoIndex ->
-            "promo" ++ String.fromInt promoIndex ++ "ps"
-
-        PromotionAction ->
-            "promoa"
-
-        CurrencyCode ->
-            "cu"
-
-        SocialNetwork ->
-            "sn"
-
-        SocialAction ->
-            "sa"
-
-        SocialActionTarget ->
-            "st"
-
-        Usertimingcategory ->
-            "utc"
-
-        Usertimingvariablename ->
-            "utv"
-
-        Usertimingtime ->
-            "utt"
-
-        Usertiminglabel ->
-            "utl"
-
-        PageLoadTime ->
-            "plt"
-
-        DNSTime ->
-            "dns"
-
-        PageDownloadTime ->
-            "pdt"
-
-        RedirectResponseTime ->
-            "rrt"
-
-        TCPConnectTime ->
-            "tcp"
-
-        ServerResponseTime ->
-            "srt"
-
-        DOMInteractiveTime ->
-            "dit"
-
-        ContentLoadTime ->
-            "clt"
-
-        ExceptionDescription ->
-            "exd"
-
-        IsExceptionFatal ->
-            "exf"
-
-        CustomDimension1 ->
-            "cd1"
-
-        CustomMetric1 ->
-            "cm1"
+        CustomMetric metric value ->
+            string ("cm" ++ String.fromInt metric) value
