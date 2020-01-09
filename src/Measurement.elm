@@ -1,4 +1,4 @@
-module Measurement exposing (Msg, getHit, pageview, postHit)
+module Measurement exposing (Msg, getHit, pageview, event, postHit)
 
 import HitType exposing (HitType)
 import Http
@@ -85,8 +85,24 @@ pageview : String -> String -> String -> Cmd Msg
 pageview trackingId clientId documentPath =
     postHit
         { hitType = HitType.Pageview
-          , trackingId = trackingId
-          , clientId = clientId
-          , payload = [ ( Parameter.DocumentPath, documentPath ) ]
-          }
+        , trackingId = trackingId
+        , clientId = clientId
+        , payload = [ ( Parameter.DocumentPath, documentPath ) ]
+        }
+        |> Http.post
+
+
+event : String -> String -> String -> String -> String -> String -> Cmd Msg
+event trackingId clientId category action label value =
+    postHit
+        { hitType = HitType.Event
+        , trackingId = trackingId
+        , clientId = clientId
+        , payload =
+            [ ( Parameter.EventCategory, category )
+            , ( Parameter.EventAction, action )
+            , ( Parameter.EventLabel, label )
+            , ( Parameter.EventValue, value )
+            ]
+        }
         |> Http.post
