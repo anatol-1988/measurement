@@ -127,12 +127,11 @@ type Parameter
 
 boolToInt : Bool -> Int
 boolToInt bool =
-    case bool of
-        True ->
-            1
+    if bool == True then
+        1
 
-        False ->
-            0
+    else
+        0
 
 
 toQuery : Parameter -> QueryParameter

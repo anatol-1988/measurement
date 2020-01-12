@@ -1,18 +1,27 @@
-module Currency exposing (Currency, fromInt, fromString, fromFloat, toString)
+module Currency exposing (Currency, fromFloat, fromInt, fromString, toString)
 
-type Currency = Currency String
+
+type Currency
+    = Currency String
 
 
 fromInt : Int -> Currency
-fromInt int = Currency <| String.fromInt int
+fromInt int =
+    Currency <| String.fromInt int
+
 
 fromString : String -> Currency
-fromString string = Currency string
+fromString string =
+    Currency string
+
 
 fromFloat : Float -> Currency
-fromFloat float = Currency <| String.fromFloat float
+fromFloat float =
+    Currency <| String.fromFloat float
+
 
 toString : Currency -> String
 toString currency =
     case currency of
-       Currency string -> string
+        Currency string ->
+            string
