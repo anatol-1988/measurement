@@ -3,7 +3,7 @@ module Tests exposing (all)
 import Expect
 import HitType
 import Http
-import Measurement exposing (getHit, postHit)
+import Measurement exposing (get, post)
 import Parameter
 import Test exposing (..)
 
@@ -13,7 +13,7 @@ all =
     describe "Check Analytics requests"
         [ test "pageview" <|
             \_ ->
-                getHit
+                get
                     { hitType = HitType.Pageview
                     , trackingId = "UA-XXXXX-Y"
                     , clientId = "555"
@@ -24,7 +24,7 @@ all =
                         "https://www.google-analytics.com/collect?v=1&tid=UA-XXXXX-Y&cid=555&t=pageview&dp=%2Fhome"
         , test "generic GET hit" <|
             \_ ->
-                getHit
+                get
                     { hitType = HitType.Pageview
                     , trackingId = "UA-123456-1"
                     , clientId = "5555"
@@ -35,7 +35,7 @@ all =
                         "https://www.google-analytics.com/collect?v=1&tid=UA-123456-1&cid=5555&t=pageview&dp=%2FpageA"
         , test "generic POST hit" <|
             \_ ->
-                postHit
+                post
                     { hitType = HitType.Pageview
                     , trackingId = "UA-123456-1"
                     , clientId = "5555"
@@ -45,7 +45,7 @@ all =
                     |> Expect.equal "https://www.google-analytics.com/collect"
         , test "event tracking" <|
             \_ ->
-                getHit
+                get
                     { hitType = HitType.Event
                     , trackingId = "UA-XXXXX-Y"
                     , clientId = "555"
@@ -61,7 +61,7 @@ all =
                         "https://www.google-analytics.com/collect?v=1&tid=UA-XXXXX-Y&cid=555&t=event&ec=video&ea=play&el=holiday&ev=300"
         , test "Measuring Impressions" <|
             \_ ->
-                getHit
+                get
                     { hitType = HitType.Pageview
                     , trackingId = "UA-XXXXX-Y"
                     , clientId = "555"

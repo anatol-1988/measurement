@@ -1,4 +1,4 @@
-module Measurement exposing (Msg, event, getHit, pageview, postHit)
+module Measurement exposing (Msg, event, get, pageview, post)
 
 import HitType exposing (HitType)
 import Http
@@ -18,8 +18,8 @@ type alias Hit =
     }
 
 
-getHit : Hit -> { expect : Http.Expect Msg, url : String }
-getHit hit =
+get : Hit -> { expect : Http.Expect Msg, url : String }
+get hit =
     let
         url =
             payloadToQuery hit
@@ -29,8 +29,8 @@ getHit hit =
     }
 
 
-postHit : Hit -> { url : String, body : Http.Body, expect : Http.Expect Msg }
-postHit hit =
+post : Hit -> { url : String, body : Http.Body, expect : Http.Expect Msg }
+post hit =
     { url = "https://www.google-analytics.com/collect"
     , body = Http.stringBody "" <| payloadToQuery hit
     , expect = Http.expectWhatever Measured
@@ -76,7 +76,7 @@ batch hits =
 
 pageview : String -> String -> String -> Cmd Msg
 pageview trackingId clientId documentPath =
-    postHit
+    post
         { hitType = HitType.Pageview
         , trackingId = trackingId
         , clientId = clientId
@@ -87,7 +87,7 @@ pageview trackingId clientId documentPath =
 
 event : String -> String -> String -> String -> String -> Int -> Cmd Msg
 event trackingId clientId category action label value =
-    postHit
+    post
         { hitType = HitType.Event
         , trackingId = trackingId
         , clientId = clientId
