@@ -109,6 +109,7 @@ payloadToQuery hit =
 
 
 {-| Batching multiple hits in a single request
+    
     batch
       [ { hitType = HitType.Event
         , trackingId = "UA-XXXXX-Y"
