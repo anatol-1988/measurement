@@ -54,6 +54,10 @@ GA.get
 To send multiple hits in a single request, use batch mode.
 
 ```elm
+import Measurement as GA
+import Parameter
+import Http
+
 GA.batch
     [ { hitType = HitType.Event
       , trackingId = "UA-XXXXX-Y"

@@ -3,7 +3,7 @@
     "name": "anatol1988/measurement",
     "summary": "Working with Google Analytics Measurement Protocol",
     "license": "BSD-3-Clause",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "exposed-modules": [
         "Measurement"
     ],
