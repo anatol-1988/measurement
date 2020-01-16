@@ -1,6 +1,6 @@
 {
     "type": "package",
-    "name": "anatol1988/measurement",
+    "name": "anatol-1988/measurement",
     "summary": "Working with Google Analytics Measurement Protocol",
     "license": "BSD-3-Clause",
     "version": "1.0.0",
