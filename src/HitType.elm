@@ -1,6 +1,17 @@
-module HitType exposing (HitType(..), toString)
+module HitType exposing (HitType(..))
+
+{-| The type of hit
 
 
+# Hit types
+
+@docs HitType
+
+-}
+
+
+{-| Type of hit
+-}
 type HitType
     = Pageview
     | Screenview
@@ -10,31 +21,3 @@ type HitType
     | Social
     | Exception
     | Timing
-
-
-toString : HitType -> String
-toString hitType =
-    case hitType of
-        Pageview ->
-            "pageview"
-
-        Screenview ->
-            "screenview"
-
-        Event ->
-            "event"
-
-        Transaction ->
-            "transaction"
-
-        Item ->
-            "item"
-
-        Social ->
-            "social"
-
-        Exception ->
-            "exception"
-
-        Timing ->
-            "timing"

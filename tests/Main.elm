@@ -29,7 +29,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SendEvent ->
-            ( model, Cmd.map Ga <| GA.pageview "UA-151596008-1" "555" "/home" )
+            ( model, Cmd.map Ga <| GA.event "UA-151596008-1" "555" "1" "2" "3" 4 )
 
         Ga m ->
             let

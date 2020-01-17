@@ -1,6 +1,6 @@
 module Measurement exposing
-    ( get, post, batch
-    , event, pageview, Parameter, Msg
+    ( get, post, batch, Msg, Hit
+    , event, pageview
     )
 
 {-| This module implements Google protocol for Analytics. You can find its
@@ -9,7 +9,7 @@ description on <https://developers.google.com/analytics/devguides/collection/pro
 
 # Request constructors
 
-@docs get, post, batch, Parameter, Msg
+@docs get, post, batch, Msg, Hit
 
 
 # Helpers
@@ -20,19 +20,19 @@ description on <https://developers.google.com/analytics/devguides/collection/pro
 
 import HitType exposing (HitType)
 import Http
-import Parameter
+import Parameter exposing (Parameter(..))
+import Query exposing (toQuery)
 import Url.Builder as Url
+
 
 {-| HTTP response on hit
 -}
 type Msg
     = Measured (Result Http.Error ())
 
-{-| Measurement Protocol Parameter
--}
-type alias Parameter =
-    Parameter.Parameter
 
+{-| All fields that every request should contain
+-}
 type alias Hit =
     { hitType : HitType
     , trackingId : String
@@ -97,39 +97,38 @@ payloadToQuery : Hit -> String
 payloadToQuery hit =
     let
         payload =
-            [ Parameter.toQuery <| Parameter.ProtocolVersion "1"
-            , Parameter.toQuery <| Parameter.TrackingID hit.trackingId
-            , Parameter.toQuery <| Parameter.ClientID hit.clientId
-            , Parameter.toQuery <| Parameter.Hittype hit.hitType
+            [ toQuery <| Parameter.ProtocolVersion "1"
+            , toQuery <| Parameter.TrackingID hit.trackingId
+            , toQuery <| Parameter.ClientID hit.clientId
+            , toQuery <| Parameter.Hittype hit.hitType
             ]
-                ++ List.map
-                    (\param -> Parameter.toQuery param)
-                    hit.payload
+                ++ List.map (\param -> toQuery param) hit.payload
     in
     String.dropLeft 1 <| Url.toQuery payload
 
 
 {-| Batching multiple hits in a single request
-    
+
     batch
-      [ { hitType = HitType.Event
-        , trackingId = "UA-XXXXX-Y"
-        , clientId = "555"
-        , payload =
-            [ Parameter.CacheBuster "289372387623"
-            , Parameter.EventCategory "video"
-            , Parameter.EventAction "play"
-            , Parameter.EventLabel "holiday"
-            , Parameter.EventValue 300
-            ]
-        }
+        [ { hitType = HitType.Event
+          , trackingId = "UA-XXXXX-Y"
+          , clientId = "555"
+          , payload =
+                [ Parameter.CacheBuster "289372387623"
+                , Parameter.EventCategory "video"
+                , Parameter.EventAction "play"
+                , Parameter.EventLabel "holiday"
+                , Parameter.EventValue 300
+                ]
+          }
         , { hitType = HitType.Pageview
           , trackingId = "UA-123456-1"
           , clientId = "5555"
           , payload = [ Parameter.DocumentPath "/pageA" ]
-        }
-      ]
-      |> Http.post
+          }
+        ]
+        |> Http.post
+
 -}
 batch :
     List Hit
