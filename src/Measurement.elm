@@ -1,6 +1,6 @@
 module Measurement exposing
     ( get, post, batch
-    , event, pageview, Parameter
+    , event, pageview, Parameter, Msg
     )
 
 {-| This module implements Google protocol for Analytics. You can find its
@@ -9,7 +9,7 @@ description on <https://developers.google.com/analytics/devguides/collection/pro
 
 # Request constructors
 
-@docs get, post, batch, Parameter
+@docs get, post, batch, Parameter, Msg
 
 
 # Helpers
@@ -23,7 +23,8 @@ import Http
 import Parameter
 import Url.Builder as Url
 
-
+{-| HTTP response on hit
+-}
 type Msg
     = Measured (Result Http.Error ())
 
