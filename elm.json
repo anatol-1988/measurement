@@ -1,9 +1,9 @@
 {
     "type": "package",
-    "name": "anatol-1988/measurement",
+    "name": "rielas/measurement",
     "summary": "Working with Google Analytics Measurement Protocol",
     "license": "BSD-3-Clause",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "exposed-modules": [
         "Measurement",
         "Parameter",
