@@ -2,6 +2,8 @@
 
 This package helps you to work with Google Analytics [`Measurement protocol`](https://developers.google.com/analytics/devguides/collection/protocol/v1).
 
+Here you can see [online demo](https://ellie-app.com/7VCWZz8Kbnva1).
+
 ## Sending Required Values 
 
 ### POST request
